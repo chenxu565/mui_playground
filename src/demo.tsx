@@ -20,31 +20,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 type WrappedRatingProps = InputBaseComponentProps & RatingProps;
 
-const WrappedRating = React.forwardRef<HTMLInputElement, WrappedRatingProps>(
-  (props, ref) => {
-    const { className, value, ...rest } = props;
-    return (
-      <div className={className}>
-        <Rating
-          // onChange={(e, value) => {
-          //   const event: React.ChangeEvent<HTMLInputElement> = {
-          //     ...e,
-          //     target: {
-          //       value: String(value)
-          //     }
-          //   };
-          //   if (onChange) {
-          //     onChange(event);
-          //   }
-          // }}
-          value={Number(value)}
-          ref={ref}
-          {...rest}
-        />
-      </div>
-    );
-  }
-);
+
 
 enum Color {
   Green = "green",
@@ -99,7 +75,7 @@ const HEALTHBAR_TEXTS = [
 // };
 
 export default function CheckboxesTags() {
-  const [value, setValue] = useState(-1);
+  const [value, setValue] = useState<number>(-1);
   const [value2, setValue2] = useState<number|null>(2);
   const [rating, setRating] = useState<number>(-1);
   const [hover, setHover] = useState<number>(-1); 
@@ -108,10 +84,36 @@ export default function CheckboxesTags() {
     e.preventDefault();
     console.log(e);
   };
-
+  const WrappedRating = React.forwardRef<HTMLInputElement, WrappedRatingProps>(
+    (props, ref) => {
+      const { className, value, ...rest } = props;
+      return (
+        <div className={className}>
+          <Rating
+            // autoFocus={false}
+            max={4}
+            onChange={(event, newRating) => {
+              setRating(newRating ?? 0);
+            }}
+            onChangeActive={(event, newHover) => {
+              setHover(newHover);
+            }}
+            icon={<Favorite fontSize="inherit" sx={{ color: hover > -1 ? getColorForRating(4-hover) : getColorForRating(value?4-value:4) }} />}
+            emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ color: 'grey' }} />}
+            value={Number(value)}
+            ref={ref}
+            {...rest}
+          />
+          {rating ? <p><br/>{HEALTHBAR_TEXTS[4-rating]}</p> : null}
+          
+        </div>
+      );
+    }
+  );
   return (
-    <Stack component="form" onSubmit={onSubmit}>
-            <TextField
+    <Stack component="form" onSubmit={onSubmit} spacing={2}>
+      <TextField
+            // autoFocus={false}
         value={value}
         label="Rating"
         onChange={(e) => {
@@ -125,18 +127,18 @@ export default function CheckboxesTags() {
         }}
         InputProps={{
           inputComponent: WrappedRating,
-          inputProps: {
-            max: 4,
-            onChangeActive: (e: React.SyntheticEvent, newHover: number) => {
-              // setHover(newHover);
-              console.log(`Hovering: ${newHover}`);
-            },
-            icon: <Favorite fontSize="inherit" />,
-            emptyIcon: <FavoriteBorder fontSize="inherit" />
-          }
+          // inputProps: {
+          //   max:4,
+          //   onChangeActive: (e: React.SyntheticEvent, newHover: number) => {
+          //     setHover(newHover);
+          //     console.log(`Hovering: ${newHover}`);
+          //   },
+          //   icon: <Favorite fontSize="inherit" sx={{ color: hover > -1 ? getColorForRating(4-hover) : getColorForRating(value?4-value:4) }} />,
+          //   emptyIcon: <FavoriteBorderIcon fontSize="inherit" sx={{ color: 'grey' }} />
+          // }
         }}
       />
-
+      <TextField value={value} label="Rating" />
       <Box>
         <Rating
           value={rating}
