@@ -7,14 +7,44 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { useState } from "react";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Rating } from '@mui/material';
-import { Favorite } from '@mui/icons-material';
+import Rating, { RatingProps } from "@mui/material/Rating";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import { InputBaseComponentProps } from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { Stack } from "@mui/material";
 
 import { styled } from '@mui/material/styles';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+type WrappedRatingProps = InputBaseComponentProps & RatingProps;
+
+const WrappedRating = React.forwardRef<HTMLInputElement, WrappedRatingProps>(
+  (props, ref) => {
+    const { className, value, ...rest } = props;
+    return (
+      <div className={className}>
+        <Rating
+          // onChange={(e, value) => {
+          //   const event: React.ChangeEvent<HTMLInputElement> = {
+          //     ...e,
+          //     target: {
+          //       value: String(value)
+          //     }
+          //   };
+          //   if (onChange) {
+          //     onChange(event);
+          //   }
+          // }}
+          value={Number(value)}
+          ref={ref}
+          {...rest}
+        />
+      </div>
+    );
+  }
+);
 
 enum Color {
   Green = "green",
@@ -69,15 +99,44 @@ const HEALTHBAR_TEXTS = [
 // };
 
 export default function CheckboxesTags() {
-  const [value, setValue] = useState(['']);
+  const [value, setValue] = useState(-1);
   const [value2, setValue2] = useState<number|null>(2);
   const [rating, setRating] = useState<number>(-1);
   const [hover, setHover] = useState<number>(-1); 
-  const [iconFilledVar, setIconFilled] = useState<string>('grey');
-  const [iconHoverVar, setIconHover] = useState<string>('grey');
+
+  const onSubmit = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    console.log(e);
+  };
 
   return (
-    <>
+    <Stack component="form" onSubmit={onSubmit}>
+            <TextField
+        value={value}
+        label="Rating"
+        onChange={(e) => {
+          console.log(
+            `Selected value ${e.target.value}, type: ${typeof e.target.value}`
+          );
+          setValue(Number(e.target.value));
+        }}
+        InputLabelProps={{
+          shrink: true
+        }}
+        InputProps={{
+          inputComponent: WrappedRating,
+          inputProps: {
+            max: 4,
+            onChangeActive: (e: React.SyntheticEvent, newHover: number) => {
+              // setHover(newHover);
+              console.log(`Hovering: ${newHover}`);
+            },
+            icon: <Favorite fontSize="inherit" />,
+            emptyIcon: <FavoriteBorder fontSize="inherit" />
+          }
+        }}
+      />
+
       <Box>
         <Rating
           value={rating}
@@ -173,7 +232,7 @@ export default function CheckboxesTags() {
       <Typography component="legend">No rating given</Typography>
       <Rating name="no-value" value={null} />
     </Box>
-    </>
+    </Stack>
   );
 }
 
