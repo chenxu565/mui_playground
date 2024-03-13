@@ -13,14 +13,7 @@ import { InputBaseComponentProps } from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { Stack } from "@mui/material";
 
-import { styled } from '@mui/material/styles';
-
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
 type WrappedRatingProps = InputBaseComponentProps & RatingProps;
-
-
 
 enum Color {
   Green = "green",
@@ -44,12 +37,6 @@ const getColorForRating = (rating: number): Color => {
       return Color.Grey;
   }
 };
-type BarProps = {
-  rating: number;
-  showText: boolean;
-};
-
-
 
 const HEALTHBAR_TEXTS = [
   "The patient is in great shape",
@@ -57,27 +44,10 @@ const HEALTHBAR_TEXTS = [
   "The patient has a high risk of getting sick",
   "The patient has a diagnosed condition",
 ];
-// const HealthRatingBar = ({ rating, showText }: BarProps) => {
-//   const color = getColorForRating(rating);
-//   return (
-//     <div className="health-bar">
-//       <StyledRating
-//         // readOnly
-//         value={4 - rating}
-//         max={4}
-//         icon={<Favorite fontSize="inherit" sx={{ color: getColorForRating(rating) }} />}
-//         emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ color: 'grey' }} />}
-//       />
 
-//       {showText ? <p>{HEALTHBAR_TEXTS[rating]}</p> : null}
-//     </div>
-//   );
-// };
 
 export default function CheckboxesTags() {
   const [value, setValue] = useState<number>(-1);
-  const [value2, setValue2] = useState<number|null>(2);
-  const [rating, setRating] = useState<number>(-1);
   const [hover, setHover] = useState<number>(-1); 
 
   const onSubmit = (e: React.SyntheticEvent) => {
@@ -88,57 +58,47 @@ export default function CheckboxesTags() {
     (props, ref) => {
       const { className, value, ...rest } = props;
       return (
-        <div className={className}>
+        <div className={className} style={{ display: 'flex', alignItems: 'center' }}>
           <Rating
-            // autoFocus={false}
             max={4}
             onChange={(event, newRating) => {
-              setRating(newRating ?? 0);
+              setValue(newRating ?? 0);
             }}
             onChangeActive={(event, newHover) => {
               setHover(newHover);
             }}
-            icon={<Favorite fontSize="inherit" sx={{ color: hover > -1 ? getColorForRating(4-hover) : getColorForRating(value?4-value:4) }} />}
+            icon={<Favorite fontSize="inherit" sx={{ color: hover > -1 ? getColorForRating(4-hover) : getColorForRating(value ? 4-value : 4) }} />}
             emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ color: 'grey' }} />}
             value={Number(value)}
             ref={ref}
             {...rest}
           />
-          {rating ? <p><br/>{HEALTHBAR_TEXTS[4-rating]}</p> : null}
-          
+          {value ? <div style={{ marginLeft: '8px' }}>{HEALTHBAR_TEXTS[4-value]}</div> : null}
         </div>
       );
     }
   );
+  
   return (
     <Stack component="form" onSubmit={onSubmit} spacing={2}>
       <TextField
-            // autoFocus={false}
         value={value}
         label="Rating"
         onChange={(e) => {
-          console.log(
-            `Selected value ${e.target.value}, type: ${typeof e.target.value}`
-          );
+          console.log(`Selected value ${e.target.value}, type: ${typeof e.target.value}`);
           setValue(Number(e.target.value));
         }}
         InputLabelProps={{
           shrink: true
         }}
         InputProps={{
-          inputComponent: WrappedRating,
-          // inputProps: {
-          //   max:4,
-          //   onChangeActive: (e: React.SyntheticEvent, newHover: number) => {
-          //     setHover(newHover);
-          //     console.log(`Hovering: ${newHover}`);
-          //   },
-          //   icon: <Favorite fontSize="inherit" sx={{ color: hover > -1 ? getColorForRating(4-hover) : getColorForRating(value?4-value:4) }} />,
-          //   emptyIcon: <FavoriteBorderIcon fontSize="inherit" sx={{ color: 'grey' }} />
-          // }
+          inputComponent: WrappedRating
         }}
       />
-      <TextField value={value} label="Rating" />
+    </Stack>
+  );
+}
+      {/* <TextField value={value} label="Rating" />
       <Box>
         <Rating
           value={rating}
@@ -153,7 +113,7 @@ export default function CheckboxesTags() {
           emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ color: 'grey' }} />}
         />
           {rating ? <p>{HEALTHBAR_TEXTS[4-rating]}</p> : null}
-      </Box>
+      </Box> */}
 
 
     {/* <Box>
@@ -213,7 +173,7 @@ export default function CheckboxesTags() {
       />
       {rating? <p>{HEALTHBAR_TEXTS[4-rating]}</p> : null}
     </Box> */}
-    <Box
+    {/* <Box
       sx={{
         '& > legend': { mt: 2 },
       }}
@@ -298,4 +258,4 @@ const top100Films = [
   { title: "Once Upon a Time in the West", year: 1968 },
   { title: "American History X", year: 1998 },
   { title: "Interstellar", year: 2014 },
-];
+]; */}
