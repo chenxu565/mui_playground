@@ -56,9 +56,10 @@ export default function CheckboxesTags() {
   };
   const WrappedRating = React.forwardRef<HTMLInputElement, WrappedRatingProps>(
     (props, ref) => {
-      const { className, value, ...rest } = props;
+      const { className, ...rest } = props;
       return (
-        <div className={className} style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', margin: 20 }}>
+        {/* <div className={className} style={{ display: 'flex', alignItems: 'center' }}> */}
           <Rating
             max={4}
             onChange={(event, newRating) => {
